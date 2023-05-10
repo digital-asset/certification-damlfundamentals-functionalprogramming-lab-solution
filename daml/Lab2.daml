@@ -1,0 +1,84 @@
+module Lab2 where 
+
+import Daml.Script
+import DA.List (head, tail)
+import DA.Text (words)
+import qualified DA.Map as Map
+
+
+-- Problem 1.1
+musicalScript = script do
+    let song = [("do", "a deer, a female deer"), ("re", "a drop of golden sun"), 
+                        ("mi", "a name, I call myself"), ("fa", "a long long way to run")]
+       
+        note1 = [(head song)._1] 
+        meaning1 = [(head song)._2]
+        remainingSong = tail song
+        song = remainingSong
+
+        note2 = [(head song)._1]
+        meaning2 = [(head song)._2]
+        remainingSong = tail song
+        song = remainingSong
+
+        note3 = [(head song)._1]
+        meaning3 = [(head song)._2]
+        remainingSong = tail song
+        song = remainingSong
+
+        note4 = [(head song)._1]
+        meaning4 = [(head song)._2]
+        remainingSong = tail song
+        song = remainingSong
+
+        justNotes = [head note1, head note2, head note3, head note4]
+        justMeanings = [head meaning1, head meaning2, head meaning3, head meaning4]
+    
+    debug $ justNotes
+    debug $ justMeanings
+    debug $ reverse justNotes
+    debug $ reverse justMeanings
+
+    return ()
+
+
+--Problem 1.2
+musicalScriptWithMap = script do
+    let song = [("do", "a deer, a female deer"), ("re", "a drop of golden sun"), ("mi", "a name, I call myself"), ("fa", "a long long way to run")]
+        notesMap = Map.fromList song 
+
+    debug $ Map.size notesMap
+    debug $ Map.lookup "do" notesMap
+    debug $ Map.lookup "re" notesMap
+    debug $ Map.lookup "mi" notesMap
+    debug $ Map.lookup "fa" notesMap
+
+    return()
+
+
+musicalScriptWithLoop = script do
+    let song = [("do", "a deer, a female deer"), ("re", "a drop of golden sun"), 
+                        ("mi", "a name, I call myself"), ("fa", "a long long way to run")]
+
+    let notes = map (\x -> x._1 ) song
+    let meanings = map (\x -> x._2) song 
+
+    debug notes
+    debug meanings
+
+    return ()
+
+
+-- Problem 2
+termFrequency: Text -> Text -> Decimal
+termFrequency term string = do 
+    let n = length (filter (==term) (words string)) 
+        d = length (words string)
+    intToDecimal n / intToDecimal d
+    
+
+testTermFrequency = script do 
+
+    debug $ termFrequency "long" "a long long way to run"
+    
+    return ()

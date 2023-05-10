@@ -1,0 +1,64 @@
+module Lab6 where 
+
+import Daml.Script
+
+
+-- Problem 1
+data Account = Account with 
+    ownerId: Text 
+    balance: Decimal 
+
+class SafeAccount account id balance where 
+    safeQuery: account -> id-> balance
+
+instance SafeAccount Account Text (Optional Decimal) where 
+    safeQuery account id = if (id == account.ownerId) then Some account.balance else None 
+
+testSafeAccount = script do 
+
+    let myAccount = Account with 
+            ownerId = "123"
+            balance = 100.00
+
+        myBalance1: Optional Decimal = safeQuery myAccount "123"
+
+    debug $ myBalance1
+
+    let myBalance2: Optional Decimal = safeQuery myAccount "234"
+
+    debug $ myBalance2
+
+    return ()
+
+-- Problem 2
+
+class Redeemable i  o where 
+    redeem: i -> o
+
+data AirtravelPoint = AirtravelPoint with 
+    count: Int 
+
+data DiningPoint = DiningPoint with 
+    count: Int
+
+instance Redeemable AirtravelPoint Decimal where 
+    redeem points = intToDecimal points.count * 10.00 
+
+instance Redeemable DiningPoint Decimal where 
+    redeem points = intToDecimal points.count * 5.0 
+
+redeemPoints: (Redeemable a b) => a -> b
+redeemPoints points = redeem points 
+
+testRedeemable = script do 
+    let myTravelPoints = AirtravelPoint with 
+            count = 500
+
+        myDiningPoints = DiningPoint with 
+            count = 5000
+
+        myTotalRedeemedPoints: Decimal = redeem myTravelPoints + redeem myDiningPoints
+
+    debug  myTotalRedeemedPoints 
+   
+    return()

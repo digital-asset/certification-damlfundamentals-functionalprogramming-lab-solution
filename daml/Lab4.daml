@@ -1,0 +1,96 @@
+module Lab4 where 
+
+import Daml.Script
+import DA.List (last, tail, head, sort)
+import DA.Math (sqrt)
+import DA.Foldable (Foldable(maximum))
+
+
+-- Problem 1
+getLetterGradeUsingIf: Decimal -> Text 
+getLetterGradeUsingIf score = do 
+    if (score >= 90.0) then "A" 
+    else if (score >= 80.0) then "B"
+    else if (score >= 70.0) then "C"
+    else "F"
+
+getScoreUsingCase: Text -> Text 
+getScoreUsingCase letter = case letter of 
+    "A" -> "Score 90+"
+    "B" -> "80 to 90"
+    "C" -> "70 to 80"
+    "F" -> "less than 70"
+    _ -> "Invalid grade letter"
+
+getLetterGradeUsingGuards: Decimal -> Text 
+getLetterGradeUsingGuards score 
+    | score >= 90.0 = "A"
+    | score >= 80.0 = "B"
+    | score >= 70.0 = "C"
+    | otherwise = "D"
+
+getAverageGradeLetter: Decimal -> Decimal -> Text 
+getAverageGradeLetter x y 
+    | average >= 90.00 = "A"
+    | average >= 80.00 = "B"
+    | average >= 70.00 = "C"
+    | otherwise = "F"
+    where average = (x + y) / 2.0
+
+
+      
+testGrades = script do 
+    
+    debug $ getLetterGradeUsingIf 90.0
+    debug $ getLetterGradeUsingIf 85.0
+    debug $ getLetterGradeUsingIf 75.0
+    debug $ getLetterGradeUsingIf 65.00
+    debug "----------"
+    debug $ getScoreUsingCase "A"
+    debug $ getScoreUsingCase "B"
+    debug $ getScoreUsingCase "C"
+    debug $ getScoreUsingCase "F"
+    debug $ getScoreUsingCase "X"
+    debug "----------"
+    debug $ getLetterGradeUsingGuards 90.0
+    debug $ getLetterGradeUsingGuards 80.0
+    debug $ getLetterGradeUsingGuards 70.0
+    debug $ getLetterGradeUsingGuards 60.0
+    debug "----------"
+    debug $ getAverageGradeLetter 75.0 83.0
+    debug $ getAverageGradeLetter 95.0 83.0
+    debug $ getAverageGradeLetter 98.0 83.0
+    debug $ getAverageGradeLetter 60.0 70.0
+
+    return()
+
+
+-- Problem 2
+calculateTriangleArea: Decimal -> Decimal -> Decimal -> Decimal
+calculateTriangleArea a b c =  
+    sqrt (s * (s - a) * (s - b) * (s - c))
+    where s = (a + b + c) / 2.0
+
+     
+triangleArea: [Decimal] -> Either Text Decimal
+triangleArea x = do 
+    if (length x /= 3) then 
+        Left "Error: Triangle has 3 sides"
+    else 
+        if (head x == 0.0 || head (tail x) == 0.0 || last x == 0.0) then 
+            Left "Error: Side of a triangle cannot be 0.0"
+        else          
+            if ((maximum x)) >= sum (tail (reverse (sort x))) then 
+                Left "Error: This can't be a triangle as sum of any two sides must be greater than the third"
+            else 
+                Right (calculateTriangleArea (head x) (head (tail x)) (last x))
+        
+
+testTriangle = script do 
+
+    debug $ triangleArea [4.0, 2.0, 5.0]
+    debug $ triangleArea [1.0, 2.0, 3.0]
+    debug $ triangleArea [1.0, 2.0]
+    debug $ triangleArea [1.0, 2.0, 0.0]
+
+    return ()

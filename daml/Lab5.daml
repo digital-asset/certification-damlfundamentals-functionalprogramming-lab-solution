@@ -1,0 +1,48 @@
+module Lab5 where 
+
+import Daml.Script
+import DA.Text (words)
+
+
+-- Problem 1
+
+musicalScript = script do
+
+    let song = [("do", "a deer, a female deer"), ("re", "a drop of golden sun"), 
+                        ("mi", "a name, I call myself"), ("fa", "a long long way to run")]
+
+
+    let notes = map (\x -> x._1 )  song
+    let meanings = map (\x -> x._2) song
+
+    debug notes
+    debug meanings
+    debug $ reverse notes 
+    debug $ reverse meanings
+
+    return ()
+
+
+-- Problem 2
+termFrequency: Text -> Text -> Decimal
+termFrequency term string = do 
+    let n = length (filter (==term) (words string)) 
+        d = length (words string)
+    intToDecimal n / intToDecimal d
+
+multiTermFrequency: Text -> [Text] -> [Decimal]
+multiTermFrequency term listOfTexts = 
+   -- map (\x -> termFrequency term x) listOfTexts  --uncomment this for 2.1
+   foldr (\x f -> (termFrequency term x) :: f ) [] listOfTexts
+
+
+testMultiTermFrequency = script do 
+    let x = "hello"
+    let y = [ "hello from the other side I must have called a thousand times", 
+            "You say goodbye and I say hello hello hello",
+            "hello is it me you’re looking for",
+            "hello hello is anyone home"
+            ]
+
+    debug $ multiTermFrequency x y
+    return()
