@@ -27,7 +27,7 @@ getLetterGradeUsingGuards score
     | score >= 90.0 = "A"
     | score >= 80.0 = "B"
     | score >= 70.0 = "C"
-    | otherwise = "D"
+    | otherwise = "F"
 
 getAverageGradeLetter: Decimal -> Decimal -> Text 
 getAverageGradeLetter x y 
